@@ -33,7 +33,7 @@ const Header: React.FC = () => {
             Залiк робочого часу
           </Typography>
         </Link>
-        <Link to='/shareholder'>
+        <Link to='/shareholders'>
           <Typography variant="h6" color="inherit">
             Список пайовикiв
           </Typography>

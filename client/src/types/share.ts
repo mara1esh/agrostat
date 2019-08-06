@@ -1,6 +1,7 @@
-export interface share {
+export interface Share {
     _id: string;
     square: number;
     code?: string;
-    contractUntil?: Date;
+    contractUntil?: Date | undefined;
+    isShare?: boolean;
 }

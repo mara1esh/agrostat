@@ -1,7 +1,7 @@
-import { share } from './share'
+import { Share } from './share'
 
-export interface shareholder {
+export interface Shareholder {
     _id: string;
     name: string;
-    share: share;
+    shares: [Share];
 }

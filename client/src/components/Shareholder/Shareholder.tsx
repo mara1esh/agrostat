@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
 
 import ReadTable from "../Table/ReadTable";
@@ -9,6 +9,8 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
+
+import { getShareholders } from '../../api/shareholder'
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -69,7 +71,18 @@ const rows = [
 
 function Shareholder() {
   const classes = useStyles();
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = useState(0);
+  const [data, setData] = useState([])
+
+  useEffect(() => {
+    fetchData()
+  }, [])
+
+  async function fetchData() {
+    const shareholders = await getShareholders()
+    setData(shareholders)
+  }
+  
 
   function handleChange(event: React.ChangeEvent<{}>, newValue: number) {
     setValue(newValue);
@@ -87,7 +100,7 @@ function Shareholder() {
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>
-        <ReadTable rows={rows} />
+        <ReadTable rows={data} />
       </TabPanel>
       <TabPanel value={value} index={1}>
         <EditTable />
