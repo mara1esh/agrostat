@@ -8,7 +8,8 @@ module.exports = {
     addShareholder,
     getShareholders,
     addShareToShareholder,
-    removeShareFromShareholder
+    removeShareFromShareholder,
+    addExistShareToShareholder
 }
 
 async function addShareholder(name) {
@@ -31,6 +32,19 @@ async function getShareholders() {
         throw new Error(`getShareholders service error: ${error}`)
     }
 }
+// TODO wrong add share to shareholder. in share.model isShare is 
+// changed to true but in sharehodler.model share stay false
+async function addExistShareToShareholder(shareholderId, shareId) {
+    try {
+        const share = await Share.findByIdAndUpdate(shareId, { isShare: true })
+        await share.save()
+        const shareholder = await Shareholder.findById(shareholderId)
+        await shareholder.shares.push(share)
+        await shareholder.save()
+    } catch (error) {
+        throw new Error(`addExistShareToShareholder service error: ${error}`)
+    }
+}
 
 async function addShareToShareholder(shareholderId, newShare) {
     try {
@@ -45,13 +59,21 @@ async function addShareToShareholder(shareholderId, newShare) {
 }
 
 async function removeShareFromShareholder(shareholderId, shareId) {
+    // console.log('share', shareId);
+    // console.log('shareholderId', shareholderId);
     try {
-         await Shareholder.findByIdAndDelete(shareholderId, 
-            { $pull : { shares : { _id : shareId} }}, (err, doc) => {
-                
-                console.log(doc);
-            })
+        // const shareholder = await Shareholder.findByIdAndUpdate(shareholderId,
+        //     { $pull: { 'shares': { shareId } } },
+        //     { safe: true })
+        const shareholder = await Shareholder.findById(shareholderId)
         
+        shareholder.shares = shareholder.shares.filter(item => 
+        item._id != shareId)
+
+        await shareholder.save()
+
+        await Share.findByIdAndUpdate(shareId, { isShare: false })
+
     } catch (error) {
         throw new Error(`removeShareFromShareholder service error: ${error}`)
     }

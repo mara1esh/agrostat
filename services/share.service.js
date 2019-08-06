@@ -5,7 +5,9 @@ module.exports = {
     addShare,
     editShare,
     removeShare,
-    getShareById
+    getShareById,
+    getShares,
+    getFreeShares
 }
 
  async function addShare(newShare) {
@@ -14,6 +16,7 @@ module.exports = {
      item.square = newShare.square
      item.code = newShare.code || null
      item.contractUntil = newShare.contractUntil || null
+     item.isShare = newShare.isShare || false
 
     try {
         await item.save()
@@ -41,9 +44,29 @@ async function removeShare(id) {
 
 async function getShareById(id) {
     try {
+        // console.log(id);
         const share = await Share.findById(id)
+        // console.log(share);
         return share
     } catch (error) {
         throw new Error(`getShareById service error: ${error}`)
+    }
+}
+
+async function getShares() {
+    try {
+        const shares = await Share.find()
+        return shares
+    } catch (error) {
+        throw new Error(`getShares service error: ${error}`)
+    }
+}
+
+async function getFreeShares() {
+    try {
+        const shares = await Share.find({isShare: false})
+        return shares
+    } catch (error) {
+        throw new Error(`getShares service error: ${error}`)
     }
 }

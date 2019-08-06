@@ -4,6 +4,7 @@ module.exports = {
     createShareholder,
     getShareholders,
     appendShareToShareholder,
+    appendExistShareToShareholder,
     deleteShareFromShareholder
 }
 
@@ -29,9 +30,20 @@ async function getShareholders(req, res) {
     }
 }
 
+async function appendExistShareToShareholder(req, res) {
+    const { shareholderId, shareId } = req.body
+
+    try {
+        await shareholderService.addExistShareToShareholder(shareholderId, shareId)
+        return res.status(200).json({success: true})
+    } catch (error) {
+        return res.status(400).json({success: false, error})
+    }
+}
+
 async function appendShareToShareholder(req, res) {
     const { _id, square, code, contractUntil } = req.body
-    const newShare = { square, code, contractUntil }
+    const newShare = { square, code, contractUntil, isShare: true }
 
     try {
         await shareholderService.addShareToShareholder(_id, newShare)
@@ -43,7 +55,7 @@ async function appendShareToShareholder(req, res) {
 }
 
 async function deleteShareFromShareholder(req, res) {
-    const { _id, shareId} = req.body
+    const {_id, shareId} = req.body
 
     try {
         await shareholderService.removeShareFromShareholder(_id, shareId)
